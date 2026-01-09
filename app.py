@@ -30,7 +30,7 @@ models = {
     "Random Forest": pickle.load(open("model/random_forest_model.pkl", "rb")),
     "Naive Bayes": pickle.load(open("model/gaussian_nb_model.pkl", "rb")),
     "K-Nearest Neighbors": pickle.load(open("model/knn_model.pkl", "rb")),
-    "XGBoost": pickle.load(open("model/xgboost_model.pkl", "rb"))
+    #"XGBoost": pickle.load(open("model/xgboost_model.pkl", "rb"))
 }
 
 # -------------------------------------------------
