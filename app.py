@@ -25,12 +25,12 @@ st.markdown("Upload test data and evaluate trained ML models.")
 # Load trained models
 # -------------------------------------------------
 models = {
-    "Logistic Regression": pickle.load(open("LR_model.pkl", "rb")),
-    "Decision Tree": pickle.load(open("decision_tree_model.pkl", "rb")),
-    "Random Forest": pickle.load(open("random_forest_model.pkl", "rb")),
-    "Naive Bayes": pickle.load(open("gaussian_nb_model.pkl", "rb")),
-    "K-Nearest Neighbors": pickle.load(open("knn_model.pkl", "rb")),
-    #"XGBoost": pickle.load(open("xgboost_model.pkl", "rb"))
+    "Logistic Regression": pickle.load(open("model/LR_model.pkl", "rb")),
+    "Decision Tree": pickle.load(open("model/decision_tree_model.pkl", "rb")),
+    "Random Forest": pickle.load(open("model/random_forest_model.pkl", "rb")),
+    "Naive Bayes": pickle.load(open("model/gaussian_nb_model.pkl", "rb")),
+    "K-Nearest Neighbors": pickle.load(open("model/knn_model.pkl", "rb")),
+    "XGBoost": pickle.load(open("model/xgboost_model.pkl", "rb"))
 }
 
 # -------------------------------------------------
@@ -90,21 +90,33 @@ if uploaded_file is not None:
     # -------------------------------------------------
     st.subheader("🔍 Confusion Matrix")
 
+    plt.close("all")
+
     cm = confusion_matrix(y_test, y_pred)
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(4, 3))
+
     sns.heatmap(
         cm,
         annot=True,
         fmt="d",
-        cmap="Blues",
+        cmap="Greens",
         xticklabels=["Normal", "Suspect", "Pathological"],
         yticklabels=["Normal", "Suspect", "Pathological"],
-        ax=ax
+        ax=ax,
     )
-    ax.set_xlabel("Predicted")
-    ax.set_ylabel("Actual")
+
+    ax.set_xlabel("Predicted", fontsize=6)
+    ax.set_ylabel("Actual", fontsize=6)
+    ax.set_title("Confusion Matrix", fontsize=8)
+
+    # Reduce tick label size
+    ax.tick_params(axis='both', labelsize=8)
+
     st.pyplot(fig)
+
+
+
 
     # -------------------------------------------------
     # Classification Report
