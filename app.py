@@ -34,15 +34,47 @@ models = {
 }
 
 # -------------------------------------------------
-# Upload CSV
+# Download Sample CSV File
 # -------------------------------------------------
-uploaded_file = st.file_uploader("Upload Test Dataset (CSV)", type=["csv"])
+st.subheader("📥 Sample Test Data (CSV)")
+
+try:
+    with open("fetal_health - Test.csv", "rb") as f:
+        st.download_button(
+            label="Download Sample Test CSV",
+            data=f,
+            file_name="fetal_health - Test.csv",
+            mime="text/csv"
+        )
+except:
+    st.warning("Sample CSV file not found in project folder.")
+
+# -------------------------------------------------
+# Upload Dataset (CSV)
+# -------------------------------------------------
+st.subheader("📤 Upload Your Test Data")
+
+uploaded_file = st.file_uploader(
+    "Upload Test Dataset (CSV)",
+    type=["csv"]
+)
 
 if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
+
+    # Read CSV file
+    try:
+        data = pd.read_csv(uploaded_file)
+    except Exception as e:
+        st.error(f"Error reading file: {e}")
+        st.stop()
 
     st.subheader("📄 Uploaded Dataset Preview")
     st.dataframe(data.head())
+
+    # Check required column
+    if "fetal_health" not in data.columns:
+        st.error("Uploaded file must contain 'fetal_health' column as target label.")
+        st.stop()
 
     # Split features and target
     X_test = data.drop("fetal_health", axis=1)
@@ -54,11 +86,15 @@ if uploaded_file is not None:
     model_name = st.selectbox("Select Model", list(models.keys()))
     model = models[model_name]
 
-    
+    # -------------------------------------------------
     # Predict
     # -------------------------------------------------
-    y_pred = model.predict(X_test)
-    y_prob = model.predict_proba(X_test)
+    try:
+        y_pred = model.predict(X_test)
+        y_prob = model.predict_proba(X_test)
+    except Exception as e:
+        st.error(f"Prediction error: {e}")
+        st.stop()
 
     # Fix label shift for XGBoost (0,1,2 → 1,2,3)
     if model_name == "XGBoost":
@@ -110,13 +146,9 @@ if uploaded_file is not None:
     ax.set_ylabel("Actual", fontsize=6)
     ax.set_title("Confusion Matrix", fontsize=8)
 
-    # Reduce tick label size
     ax.tick_params(axis='both', labelsize=8)
 
     st.pyplot(fig)
-
-
-
 
     # -------------------------------------------------
     # Classification Report
@@ -133,7 +165,6 @@ if uploaded_file is not None:
     report_df = pd.DataFrame(report_dict).transpose()
     report_df = report_df.round(3)
 
-    # Custom CSS
     st.markdown("""
     <style>
     .report-table {
@@ -158,4 +189,3 @@ if uploaded_file is not None:
     """, unsafe_allow_html=True)
 
     st.markdown(report_df.to_html(classes="report-table", border=0), unsafe_allow_html=True)
-
