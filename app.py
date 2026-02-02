@@ -5,6 +5,16 @@ import pickle
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+import streamlit as st
+from streamlit_autorefresh import st_autorefresh
+
+# 30 minutes = 30 * 60 * 1000 milliseconds
+st_autorefresh(interval=1800000, key="refresh_30min")
+
+st.title("My App")
+st.write("This app refreshes every 30 minutes.")
+
+
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
